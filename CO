@@ -1,0 +1,95 @@
+instructs={'add':'10000','sub':'10001','movi':'10010','movr':'10011','ld':'10100','st':'10101','mul':'10110','div':'10111','rs':'11000','ls':'11001','xor':'11010','or':'11011','and':'11100','not':'11101','cmp':'11110','jmp':'11111','jlt':'01100','jgt':'01101','je':'01111','hlt':'01010'}
+type={'add':'A','sub':'A','movi':'B','movr':'C','ld':'D','st':'D','mul':'A','div':'C','rs':'B','ls':'B','xor':'A','or':'A','and':'A','not':'C','cmp':'C','jmp':'E','jlt':'E','jgt':'E','je':'E','hlt':'F'}
+reg={'R0':'000','R1':'001','R2':'010','R3':'011','R4':'100','R5':'101','R6':'110','FLAGS':'111'}
+def decimalToBinary(n):
+    n=int(n)
+    val=bin(n).replace("0b", "")
+    val=int(val)
+    a=[]
+    while(val>0):         
+        x=val%10     #
+        a.append(x)
+        val=val//10      
+    c=8-len(a)
+    while(c>0):
+        a.append(0)  
+        c-=1     
+    a.reverse()
+    return a
+labels={}
+#store input lines as tuple, line,line2,line3.......\
+def lineToBinary(line):
+    ans=''
+    if (line[0]=='mov'):
+        if (line[2] in reg): 
+            line[0]='movr'
+        else: 
+            line[0]='movi'
+    ans+=instructs.get(line[0])
+    typeOfIns=type.get(line[0])
+    if (typeOfIns=='A'):
+        ans+='00'
+        ans+=reg.get(line[1])
+        ans+=reg.get(line[2])
+        ans+=reg.get(line[3])
+    if (typeOfIns=='B'):
+        ans+=reg.get(line[1])
+        ans+=decimalToBinary((line[2][1:]))
+    if (typeOfIns=='C'):
+        ans+='00000'
+        ans+=reg.get(line[1])
+        ans+=reg.get(line[2])
+    if (typeOfIns=='D'):
+        ans+=reg.get(line[1])
+        ans+=memAdd(line[2])
+    if (typeOfIns=='E'):
+        ans+='000'
+        ans+=memAdd(line[1])
+    if (typeOfIns=='F'):
+        ans+='00000000000'
+
+    return ans   
+
+def label_finder(line,i):
+    if (line[0][-1]==':'):
+        labels['line[0:-1]']=i
+        
+line=['mov', 'R1', '$10']
+   
+# print(lineToBinary(l))
+
+
+ans=''
+if (line[0]=='mov'):
+    if (line[2] in reg): 
+        line[0]='movr'
+    else: 
+        line[0]='movi'
+ans+=instructs.get(line[0])
+typeOfIns=type.get(line[0])
+if (typeOfIns=='A'):
+    ans+='00'
+    ans+=reg.get(line[1])
+    ans+=reg.get(line[2])
+    ans+=reg.get(line[3])
+if (typeOfIns=='B'):
+    ans+=reg.get(line[1])
+    sr=str(line[2])
+    # print(type(str))
+    print(sr)
+    print(type(sr) is list)
+    ans+=decimalToBinary(sr[1:])
+
+if (typeOfIns=='C'):
+    ans+='00000'
+    ans+=reg.get(line[1])
+    ans+=reg.get(line[2])
+if (typeOfIns=='D'):
+    ans+=reg.get(line[1])
+    ans+=memAdd(line[2])
+if (typeOfIns=='E'):
+    ans+='000'
+    ans+=memAdd(line[1])
+if (typeOfIns=='F'):
+    ans+='00000000000'
+print (ans)
